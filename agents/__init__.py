@@ -3,6 +3,7 @@ from typing import Type, cast
 from dotenv import load_dotenv
 
 from .agent import Agent, Playback
+from .exploration_agent import ExplorationAgent
 from .recorder import Recorder
 from .swarm import Swarm
 from .templates.langgraph_functional_agent import LangGraphFunc, LangGraphTextOnly
@@ -32,6 +33,7 @@ AVAILABLE_AGENTS["reasoningagent"] = ReasoningAgent
 __all__ = [
     "Swarm",
     "Random",
+    "ExplorationAgent",
     "LangGraphFunc",
     "LangGraphTextOnly",
     "LangGraphThinking",

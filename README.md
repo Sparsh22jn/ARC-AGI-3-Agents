@@ -1,137 +1,97 @@
-# ARC-AGI-3-Agents
+# ARC-AGI-3 Agent — ARC Prize 2026
 
-## Quickstart
+My submission for the [ARC Prize 2026 — ARC-AGI-3 Competition](https://www.kaggle.com/competitions/arc-prize-2026-arc-agi-3).
 
-Install [uv](https://docs.astral.sh/uv/getting-started/installation/) if not aready installed.
+## What is ARC-AGI-3?
 
-1. Clone the ARC-AGI-3-Agents repo and enter the directory.
+ARC-AGI-3 drops an AI agent into interactive game-like environments with **no instructions, no rules, and no stated goals**. The agent must explore, discover the rules, figure out what "winning" means, and execute — all from scratch.
+
+- Humans score **100%**
+- Best frontier AI (Gemini 3.1 Pro) scores **0.37%**
+- Best algorithmic agent (RL + graph search) scores **12.58%**
+
+Prize pool: **$2M+** across three tracks.
+
+## My Approach
+
+**Architecture:** [Describe your approach here as you develop it]
+
+**Core ideas:**
+- Systematic exploration with change detection
+- [Your approach: Bayesian world modeling / program synthesis / RL / etc.]
+- Action-efficiency optimization (quadratic scoring penalty)
+
+## Setup
 
 ```bash
-git clone https://github.com/arcprize/ARC-AGI-3-Agents.git
+# Clone
+git clone https://github.com/YOUR_USERNAME/ARC-AGI-3-Agents.git
 cd ARC-AGI-3-Agents
+
+# Install
+uv sync
+# or: pip install arc-agi
+
+# Set API key
+export ARC_API_KEY="your-key"
+
+# Run the exploration agent
+uv run main.py --agent=explorationagent --game=ls20
+
+# Run on all games
+uv run main.py --agent=explorationagent
 ```
 
-2. Copy .env.example to .env
+## Project Structure
 
-```bash
-cp .env.example .env
+```
+ARC-AGI-3-Agents/
+├── agents/
+│   ├── __init__.py              # Agent registry
+│   ├── agent.py                 # Base Agent class
+│   ├── structs.py               # FrameData, GameAction, GameState
+│   ├── exploration_agent.py     # My custom agent
+│   └── templates/
+│       └── random_agent.py      # Reference: random baseline
+├── main.py                      # Entry point
+├── notebooks/
+│   ├── analysis.ipynb           # Grid analysis & visualization
+│   └── kaggle_submission.ipynb  # Kaggle submission notebook
+├── experiments/
+│   └── experiment_log.md        # Track what works / doesn't
+├── SETUP_GUIDE.md               # Detailed setup instructions
+└── README.md                    # This file
 ```
 
-3. Get an API key from the [ARC-AGI-3 Website](https://three.arcprize.org/) and set it as an environment variable in your .env file.
+## Development Workflow
 
-```bash
-export ARC_API_KEY="your_api_key_here"
-```
+1. **Develop locally** with Claude Code in OFFLINE mode (~2K FPS, no rate limits)
+2. **Test ONLINE** for real scorecards and replays
+3. **Push to GitHub** for version control
+4. **Submit to Kaggle** when ready for official evaluation
 
-4. Run the random agent (generates random actions) against the ls20 game.
+## Experiment Log
 
-```bash
-uv run main.py --agent=random --game=ls20
-```
+| Date | Experiment | Game | Score | Notes |
+|------|-----------|------|-------|-------|
+| YYYY-MM-DD | Random baseline | ls20 | ~0% | Baseline measurement |
+| YYYY-MM-DD | Exploration agent v1 | ls20 | TBD | Systematic action cycling + change detection |
 
-For more information, see the [documentation](https://three.arcprize.org/docs#quick-start) or the [tutorial video](https://youtu.be/xEVg9dcJMkw).
+## Key Constraints
 
-## Changelog
-## [0.9.3] - 2026-01-29
-**Note: This will be a breaking change is you use the fields outline below**
+- **No internet** during Kaggle evaluation
+- **T4 GPU** (16GB VRAM) + 12hr runtime limit
+- **Action efficiency scoring** — 10× human actions ≈ 1% score, 5× cap terminates
+- **Must open-source** to be prize-eligible (MIT-0 or CC0 license)
 
-### Added
-- `FrameData` had two field names changes. 
-  - `score` changed to `levels_completed`
-  - `win_score` changed to `win_levels`
-- Updated to use the new [ARC-AGI](https://github.com/arcprize/ARC-AGI) tool
-  - Allows local execution of environments
-  - Allows the creation of your own environments, see [Creating an Environment](https://docs.arcprize.org/add_game)
-  - If you want to continue to use the online API/Replays set `ONLINE_ONLY` to `True` in `.env.example`
+## Resources
 
-## [0.9.2] - 2025-08-19
-
-### Added
-- `available_actions` to `FrameData`
-- `ACTION7` as possible `GameAction`
-
-## [0.9.1] - 2025-07-18
-
-Initial Release
-
-## Observability (Optional)
-
-[AgentOps](https://agentops.ai/) is an observability platform designed for providing real-time monitoring, debugging, and analytics for your agent's behavior, helping you understand how your agents perform and make decisions.
-
-### Installation
-
-AgentOps is already included as an optional dependency in this project. To install it:
-
-```bash
-uv sync --extra agentops
-```
-
-Or if you're installing manually:
-
-```bash
-pip install -U agentops
-```
-
-### Getting Your API Key
-
-1. Visit [app.agentops.ai](https://app.agentops.ai) and create an account if you haven't already
-2. Once logged in, click on "New Project" to create a project for your ARC-AGI-3 agents
-3. Give your project a meaningful name (e.g., "ARC-AGI-3-Agents")
-4. After creating the project, you'll see your project dashboard
-5. Click on the "API Keys" tab on the left side & copy the API key
-
-### Configuration
-
-1. Add your AgentOps API key to your `.env` file:
-
-```bash
-AGENTOPS_API_KEY=aos_your_api_key_here
-```
-
-2. The AgentOps integration is automatically initialized when you run an agent. The tracing decorator `@trace_agent_session` is already applied to agent execution methods in the codebase.
-
-3. When you run your agent, you'll see AgentOps initialization messages and session URLs in the console:
-
-```bash
-🖇 AgentOps: Session Replay for your-agent-name: https://app.agentops.ai/sessions?trace_id=xxxxx
-```
-
-4. Click on the session URL to view real-time traces of your agent's execution. You can also view the traces in the AgentOps dashboard by locating the trace ID in the "Traces" tab.
-
-### Using AgentOps with Custom Agents
-
-If you're creating a custom agent, the tracing is automatically applied through the `@trace_agent_session` decorator on the `main()` method. No additional code changes are needed.
-
-## Contest Submission
-
-To submit your agent for the ARC-AGI-3 competition, please use this form: https://forms.gle/wMLZrEFGDh33DhzV9.
-
-## Contributing
-
-We welcome contributions! To contribute to ARC-AGI-3-Agents, please follow these steps:
-
-1.  Fork the repository and create a new branch for your feature or bugfix.
-2.  Make your changes and ensure that all tests pass, you are welcome to add more tests for your specific fixes.
-3.  This project uses `ruff` for linting and formatting. Please set up the pre-commit hooks to ensure your contributions match the project's style.
-    ```bash
-    pip install pre-commit
-    pre-commit install
-    ```
-4.  Write clear commit messages describing your changes.
-5.  Open a pull request with a description of your changes and the motivation behind them.
-
-If you have questions or need help, feel free to open an issue.
-
-## Tests
-
-To run the tests, you will need to have `pytest` installed. Run the tests like this:
-
-```bash
-pytest
-```
-
-For more information on tests, please see the [tests documentation](https://three.arcprize.org/docs#testing).
+- [ARC-AGI-3 Docs & SDK](https://docs.arcprize.org/)
+- [Technical Paper](https://arcprize.org/media/ARC_AGI_3_Technical_Report.pdf)
+- [2025 Winning Solutions](https://arcprize.org/competitions/2025)
+- [Discord Community](https://discord.gg/9b77dPAmcA)
+- [Agent Quickstart Video](https://www.youtube.com/watch?v=xEVg9dcJMkw)
 
 ## License
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+MIT-0 (required for ARC Prize eligibility)
